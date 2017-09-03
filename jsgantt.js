@@ -283,7 +283,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 	var vUseRowHlt=1;
 	var vUseToolTip=1;
 	var vUseSort=1;
-	var vUseSingleCell=25000;
+	var vUseSingleCell=250000;
 	var vShowRes=1;
 	var vShowDur=1;
 	var vShowComp=1;
@@ -812,7 +812,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 					else
 					{
 						vCellContents+='\u00A0\u00A0\u00A0\u00A0';
-						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vCellContents+vTaskList[i].getName());
+						vTmpDiv=this.newNode(vTmpCell, 'div', null, 'gcustom', vCellContents+vTaskList[i].getName());
 					}
 
 					if(vShowRes==1)
@@ -1042,7 +1042,6 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 
 				vTaskLeftPx=JSGantt.getOffset(vMinDate, curTaskStart, vColWidth, vFormat);
 				vTaskRightPx=JSGantt.getOffset(curTaskStart, curTaskEnd, vColWidth, vFormat);
-
 				vID=vTaskList[i].getID();
 				var vComb=(vTaskList[i].getParItem() && vTaskList[i].getParItem().getGroup()==2);
 				var vCellFormat='';
@@ -1086,7 +1085,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 				}
 				else
 				{
-					vTaskWidth=vTaskRightPx-1;
+					vTaskWidth=vTaskRightPx;
 
 					// Draw Group Bar which has outer div with inner group div and several small divs to left and right to create angled-end indicators
 					if(vTaskList[i].getGroup())
@@ -1660,14 +1659,14 @@ JSGantt.getOffset=function(pStartDate, pEndDate, pColWidth, pFormat)
 	var tmpTaskEnd=Date.UTC(curTaskEnd.getFullYear(), curTaskEnd.getMonth(), curTaskEnd.getDate(), curTaskEnd.getHours(), 0, 0);
 
 	var vTaskRight=(tmpTaskEnd-tmpTaskStart)/3600000; // Length of task in hours
-
+	
 	if(pFormat=='day')
 	{
-		vTaskRightPx=Math.ceil((vTaskRight/24) * (pColWidth+1));
+		vTaskRightPx=Math.ceil((vTaskRight/24) * (pColWidth+2.8) - 1);
 	}
 	else if(pFormat=='week')
 	{
-		vTaskRightPx=Math.ceil(((vTaskRight/24) * (pColWidth+1))/7);
+		vTaskRightPx=Math.ceil((vTaskRight/(24*7)) * (pColWidth+3) - 1);
 	}
 	else if(pFormat=='month')
 	{
@@ -1676,7 +1675,7 @@ JSGantt.getOffset=function(pStartDate, pEndDate, pColWidth, pFormat)
 		vPosTmpDate.setDate(curTaskStart.getDate());
 		var vDaysCrctn=(curTaskEnd.getTime()-vPosTmpDate.getTime())/ (86400000);
 
-		vTaskRightPx=Math.ceil((vMonthsDiff * (pColWidth+1))+(vDaysCrctn * (pColWidth/vMonthDaysArr[curTaskEnd.getMonth()])));
+		vTaskRightPx=Math.ceil((vMonthsDiff * (pColWidth+3))+(vDaysCrctn * (pColWidth/vMonthDaysArr[curTaskEnd.getMonth()])) - 1);
 	}
 	else if(pFormat=='quarter')
 	{
@@ -1685,7 +1684,7 @@ JSGantt.getOffset=function(pStartDate, pEndDate, pColWidth, pFormat)
 		vPosTmpDate.setDate(curTaskStart.getDate());
 		vDaysCrctn=(curTaskEnd.getTime()-vPosTmpDate.getTime())/ (86400000);
 
-		vTaskRightPx=Math.ceil((vMonthsDiff * ((pColWidth+1)/3))+(vDaysCrctn * (pColWidth/90)));
+		vTaskRightPx=Math.ceil((vMonthsDiff * ((pColWidth+3)/3))+(vDaysCrctn * (pColWidth/90)) - 1);
 	}
 	else if(pFormat=='hour')
 	{
@@ -2224,8 +2223,8 @@ JSGantt.parseXML=function(pFile,pGanttVar)
 	} else {	// IE 5/6
 		xhttp=new ActiveXObject('Microsoft.XMLHTTP');
 	}
-
 	xhttp.open('GET', pFile, false);
+	xhttp.setRequestHeader('Cache-Control', 'no-cache');
 	xhttp.send(null);
 	var xmlDoc=xhttp.responseXML;
 

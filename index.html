@@ -1161,7 +1161,24 @@ alert("Error, unable to create Gantt Chart");
         <p>© Copyright 2013-2017 jsGanttImproved<br />
         Designed with <a href="https://v4-alpha.getbootstrap.com" target="_blank">Bootstrap</a> and <a href="http://fontawesome.io" target="_blank">Font Awesome</a></p>
       </div>
-
+<script type="text/javascript">
+			$( document ).ready(function() {
+			$(document).on('mouseenter', ".gcustom", function() 
+			{
+				var $this = $(this);
+				//if(this.offsetWidth < this.scrollWidth && !$this.attr('title')) 
+				{
+					$this.tooltip({
+						title: $this.text(),
+						placement: "top",
+						container:'body'
+					});
+					console.log($this.text());
+					$this.tooltip('show');
+				}
+			});
+		});
+		</script>
   </body>
 
 </html>
